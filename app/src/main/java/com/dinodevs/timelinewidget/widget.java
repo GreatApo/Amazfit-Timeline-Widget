@@ -143,7 +143,7 @@ public class widget extends AbstractPlugin {
                     Calendar calendar = Calendar.getInstance();
                     if(!data.getString(2).equals("") && !data.getString(2).equals("null")) {
                         calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
-                        start = dateToString( calendar,"hh/mm a" );
+                        start = dateToString( calendar,"hh:mm a" );
 
                         if( !last_date.equals(dateToString( calendar,"d MMMM" )) ){
                             last_date = dateToString( calendar,"d MMMM" );
@@ -155,7 +155,7 @@ public class widget extends AbstractPlugin {
                     }
                     if(!data.getString(3).equals("") && !data.getString(3).equals("null")) {
                         calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
-                        end = " - "+ dateToString(calendar, "hh/mm a");
+                        end = " - "+ dateToString(calendar, "hh:mm a");
                     }
                     if(!data.getString(4).equals("") && !data.getString(4).equals("null")) {
                         location = "\n@ "+data.getString(4);

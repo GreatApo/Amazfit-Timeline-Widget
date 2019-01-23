@@ -10,7 +10,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionName '1.0.0'
-        versionCode 20190116
+        versionCode 20190123
     }
     buildTypes {
         release {
