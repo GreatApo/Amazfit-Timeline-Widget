@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spring_depend">
+        <item>com.dinodevs.timelinewidget/com.dinodevs.timelinewidget.timelinewidget</item>
+    </string-array>
+</resources>
