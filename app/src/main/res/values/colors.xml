@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="time">#ADADAD</color>
+    <color name="date">#ADADAD</color>
+    <color name="bull">#C92626</color>
+    <color name="title">#FFFFFF</color>
+    <color name="description">#C7C7C7</color>
+    <color name="background">#E6000000</color>
 </resources>

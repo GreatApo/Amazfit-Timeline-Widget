@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Timeline Widget</string>
+
+    <string name="bull">⚫</string>
 </resources>

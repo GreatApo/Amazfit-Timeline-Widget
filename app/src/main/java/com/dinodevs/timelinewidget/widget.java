@@ -18,6 +18,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,9 +77,12 @@ public class widget extends AbstractPlugin {
             e.printStackTrace();
         }
 
-        // Show Date
-        TextView date = this.mView.findViewById(R.id.date);
-        date.setText( dateToString(Calendar.getInstance(),"MM/yyyy") );
+        // Show Time/Date
+        TextView time = this.mView.findViewById(R.id.time);
+        //time.setText( dateToString(Calendar.getInstance(),"hh:mm a") );
+        time.setText( dateToString(Calendar.getInstance(),"EEEE\nd MMMM") );
+        //TextView date = this.mView.findViewById(R.id.date);
+        //date.setText( dateToString(Calendar.getInstance(),"MM MMMM") );
 
         // Calendar Events Data
         eventsList = new ArrayList<>();
@@ -91,7 +95,7 @@ public class widget extends AbstractPlugin {
     @SuppressLint("ClickableViewAccessibility")
     private void initListeners(){
         // About button event
-        TextView about = this.mView.findViewById(R.id.date);
+        TextView about = this.mView.findViewById(R.id.time);
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,46 +114,81 @@ public class widget extends AbstractPlugin {
         // Load data
         String calendarEvents = Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData");
 
-        HashMap<String, String> event = new HashMap<>();
-
         try {
             // Check if correct form of JSON
             JSONObject json_data = new JSONObject(calendarEvents);
             if( json_data.has("events") ){
                 int event_number = json_data.getJSONArray("events").length();
-
+                String last_date = "";
                 //String[] titles = new String[event_number];
 
                 // Get data
                 for(int i=0; i<event_number; i++) {
                     //titles[i] = json_data.getJSONArray("events").getJSONArray(i).getString(0);
 
-                    // adding each child node to HashMap key => value
-                    event.put("id", json_data.getJSONArray("events").getJSONArray(i).getString(0));
-                    event.put("name", json_data.getJSONArray("events").getJSONArray(i).getString(1));
-                    event.put("email", json_data.getJSONArray("events").getJSONArray(i).getString(2));
-                    event.put("mobile", json_data.getJSONArray("events").getJSONArray(i).getString(3));
+                    JSONArray data = json_data.getJSONArray("events").getJSONArray(i);
+                    HashMap<String, String> event = new HashMap<>();
 
+                    // adding each child node to HashMap key => value
+                    event.put("title", data.getString(0));
+                    //event.put("description", data.getString(1));
+                    //event.put("start", data.getString(2));
+                    //event.put("end", data.getString(3));
+                    //event.put("location", data.getString(4));
+                    //event.put("account", data.getString(5));
+
+                    String start = "N/A";
+                    String end = "";
+                    String location = "";
+                    Calendar calendar = Calendar.getInstance();
+                    if(!data.getString(2).equals("") && !data.getString(2).equals("null")) {
+                        calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
+                        start = dateToString( calendar,"hh/mm a" );
+
+                        if( !last_date.equals(dateToString( calendar,"d MMMM" )) ){
+                            last_date = dateToString( calendar,"d MMMM" );
+                            HashMap<String, String> date_elem = new HashMap<>();
+                            date_elem.put("title", last_date);
+                            date_elem.put("subtitle", "" );
+                            eventsList.add(date_elem);
+                        }
+                    }
+                    if(!data.getString(3).equals("") && !data.getString(3).equals("null")) {
+                        calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
+                        end = " - "+ dateToString(calendar, "hh/mm a");
+                    }
+                    if(!data.getString(4).equals("") && !data.getString(4).equals("null")) {
+                        location = "\n@ "+data.getString(4);
+                    }
+                    event.put("subtitle", start+ end + location );
                     // adding events to events list
                     eventsList.add(event);
                 }
             }else{
-                event.put("id", "0");
-                event.put("name", "1");
-                event.put("email", "2");
-                event.put("mobile", "3");
+                HashMap<String, String> event = new HashMap<>();
+                event.put("title", "No events");
+                //event.put("description", "-");
+                //event.put("start", "-");
+                //event.put("end", "-");
+                //event.put("location", "-");
+                //event.put("account", "-");
+                event.put("subtitle", "-");
                 eventsList.add(event);
             }
         } catch (JSONException e) {
             //default
-            event.put("id", "0");
-            event.put("name", "1");
-            event.put("email", "2");
-            event.put("mobile", "3");
+            HashMap<String, String> event = new HashMap<>();
+            event.put("title", "No events");
+            //event.put("description", "-");
+            //event.put("start", "-");
+            //event.put("end", "-");
+            //event.put("location", "-");
+            //event.put("account", "-");
+            event.put("subtitle", "-");
             eventsList.add(event);
         }
 
-        ListAdapter adapter = new SimpleAdapter(mContext, eventsList, R.layout.list_item, new String[]{"name", "email", "mobile"}, new int[]{R.id.name, R.id.email, R.id.mobile});
+        ListAdapter adapter = new SimpleAdapter(mContext, eventsList, R.layout.list_item, new String[]{"title", "subtitle"}, new int[]{R.id.title, R.id.description});
         lv.setAdapter(adapter);
     }
 

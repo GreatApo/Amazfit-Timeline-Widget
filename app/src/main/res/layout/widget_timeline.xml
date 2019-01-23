@@ -5,13 +5,18 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/time"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:paddingTop="8dip"
+        android:textColor="@color/time"
+        android:background="@color/background"/>
 
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dip"
+        android:layout_below="@+id/time"/>
 </RelativeLayout>
