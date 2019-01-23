@@ -2,8 +2,7 @@
 
 # Amazfit Pace/Stratos/Verge Timeline Widget
 
-After [Quinny899](https://github.com/KieronQuinn)'s excellent work, we are able to make widget/apps!
-So, here is the first Calendar Widget for our Amazfit Pace/Stratos!
+Here is the first Calendar Events Widget for our Amazfits!
 
 
 
