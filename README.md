@@ -17,6 +17,7 @@ Here is the first Calendar Events Widget for our Amazfits!
 - Date change indicator is similar to events = ugly (see image)
 - No interaction with the events items (data not used: account, description)
 - Shows all data, it should show future only (easy fixed but first events have to sorted)
+- Does not update
 
 
 
