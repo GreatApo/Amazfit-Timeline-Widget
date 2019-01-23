@@ -42,7 +42,7 @@ adb shell am force-stop com.huami.watch.launcher
 
 
 ### Screenshots (Version 1.0.0 beta)
-![Amazfit Timeline Widget v1.0.0](other%20files/TimelineWidget-1.0.0.jpg)
+![Amazfit Timeline Widget v1.0.0](other%20files/TimelineWidget-0.0.0.jpg)
 
 
 
