@@ -13,7 +13,6 @@ Here is the first Calendar Events Widget for our Amazfits!
 
 ### Bugs / To Do
 - Amazmod has no on/off option (events are just pushed along battery/alarm data)
-- Events are not sorted by date
 - Date change indicator is similar to events = ugly (see image)
 - No interaction with the events items (data not used: account, description)
 - Shows all data, it should show future only (easy fixed but first events have to sorted)
