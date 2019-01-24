@@ -102,6 +102,17 @@ public class widget extends AbstractPlugin {
                 widget.this.toast("Timeline Widget v" + widget.this.version + " by GreatApo");
             }
         });
+
+        about.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                loadCalendarEvents();
+                widget.this.toast("Refreshing events...");
+                return true;
+            }
+        });
+
+
     }
 
     // Refresh Calendar (set it to current month)
@@ -111,6 +122,7 @@ public class widget extends AbstractPlugin {
 
 
     public void loadCalendarEvents() {
+        eventsList = new ArrayList<>();
         // Load data
         String calendarEvents = Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData");
 
