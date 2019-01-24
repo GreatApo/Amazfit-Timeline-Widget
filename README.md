@@ -1,4 +1,4 @@
-[![latest release](https://img.shields.io/badge/latest%20release-v1.0.0.Beta-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.00.00-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
+[![latest release](https://img.shields.io/badge/latest%20release-v1.0.0-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.00.00-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
 # Amazfit Timeline Widget
 
@@ -44,7 +44,7 @@ adb uninstall com.dinodevs.timelinewidget
 
 
 
-### Screenshots (Version 1.0.0 beta)
+### Screenshots (Version 1.0.0)
 ![Amazfit Timeline Widget v1.0.0](other%20files/TimelineWidget-1.0.0.jpg)
 
 
