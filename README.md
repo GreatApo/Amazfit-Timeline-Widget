@@ -1,4 +1,4 @@
-[![latest release](https://img.shields.io/badge/latest%20release-v1.0.0-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.00.00-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
+[![latest release](https://img.shields.io/badge/latest%20release-v1.0.0-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.01.24-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
 # Amazfit Timeline Widget
 
