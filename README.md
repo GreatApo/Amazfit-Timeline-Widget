@@ -22,7 +22,7 @@ Here is the first Calendar Events Widget for our Amazfits!
 ### Download
 
 Get a ready to use binary
- - From our [Github Releases](https://github.com/GreatApo/AmazfitPaceCalendarWidget/releases/latest)
+ - From our [Github Releases](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
 Or if you are hardcore, compile the source code with Android Studio.
 
