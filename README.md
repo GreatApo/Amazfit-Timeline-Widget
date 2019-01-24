@@ -10,6 +10,7 @@ Here is the first Calendar Events Widget for our Amazfits!
 - This is a Pace/Stratos/Verge Widget
 - Shows your phone calendar
 - Shows only future events and from the last 10 minutes
+
 In order to work, [Amazmod](https://github.com/AmazMod/AmazMod) (both phone and service/watch) must be installed, and calendar data forwarding should be enabled.
 
 
