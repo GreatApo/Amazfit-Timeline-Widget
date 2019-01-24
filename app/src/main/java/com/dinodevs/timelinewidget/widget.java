@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -26,7 +27,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import clc.sliteplugin.flowboard.AbstractPlugin;
 import clc.sliteplugin.flowboard.ISpringBoardHostStub;
@@ -36,7 +39,7 @@ public class widget extends AbstractPlugin {
     // Tag for logging purposes.
     private static String TAG = "TimelineWidget";
     // Version
-    public String version = "n/a";
+    private String version = "n/a";
 
     // Activity variables
     private boolean isActive = false;
@@ -45,6 +48,9 @@ public class widget extends AbstractPlugin {
 
     private ListView lv;
     private ArrayList<HashMap<String, String>> eventsList;
+
+    private long next_event;
+    private String calendarEvents;
 
 
     // Set up the widget's layout
@@ -78,11 +84,7 @@ public class widget extends AbstractPlugin {
         }
 
         // Show Time/Date
-        TextView time = this.mView.findViewById(R.id.time);
-        //time.setText( dateToString(Calendar.getInstance(),"hh:mm a") );
-        time.setText( dateToString(Calendar.getInstance(),"EEEE\nd MMMM") );
-        //TextView date = this.mView.findViewById(R.id.date);
-        //date.setText( dateToString(Calendar.getInstance(),"MM MMMM") );
+        refresh_time();
 
         // Calendar Events Data
         eventsList = new ArrayList<>();
@@ -95,49 +97,63 @@ public class widget extends AbstractPlugin {
     @SuppressLint("ClickableViewAccessibility")
     private void initListeners(){
         // About button event
-        TextView about = this.mView.findViewById(R.id.time);
-        about.setOnClickListener(new View.OnClickListener() {
+        TextView time = this.mView.findViewById(R.id.time);
+        time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                refresh_time();
                 widget.this.toast("Timeline Widget v" + widget.this.version + " by GreatApo");
             }
         });
-
-        about.setOnLongClickListener(new View.OnLongClickListener() {
+        // Refresh events
+        time.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                refresh_time();
                 loadCalendarEvents();
                 widget.this.toast("Refreshing events...");
                 return true;
             }
         });
-
-
+        // Scroll to top
+        TextView top = this.mView.findViewById(R.id.backToTop);
+        top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListView list = widget.this.mView.findViewById(R.id.list);
+                list.setSelectionAfterHeaderView();
+                //widget.this.toast("▲ Top");
+            }
+        });
     }
 
-    // Refresh Calendar (set it to current month)
-    private void refreshView() {
-        // Refresh timeline
+    private void refresh_time(){
+        TextView time = this.mView.findViewById(R.id.time);
+        time.setText( dateToString(Calendar.getInstance(),"hh:mm a\nEEEE, d MMMM") );
     }
 
-
-    public void loadCalendarEvents() {
+    private void loadCalendarEvents() {
         eventsList = new ArrayList<>();
+        next_event = 0;
+
         // Load data
-        String calendarEvents = Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData");
+        calendarEvents = Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData");
 
         try {
             // Check if correct form of JSON
             JSONObject json_data = new JSONObject(calendarEvents);
+
+            // If there are events
             if( json_data.has("events") ){
                 int event_number = json_data.getJSONArray("events").length();
-                String last_date = "";
-                //String[] titles = new String[event_number];
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MINUTE,-10); // Show only future events + 10 minutes old
+                long current_time = calendar.getTimeInMillis();
+                String current_loop_date = "";
 
                 // Get data
                 for(int i=0; i<event_number; i++) {
-                    //titles[i] = json_data.getJSONArray("events").getJSONArray(i).getString(0);
-
                     JSONArray data = json_data.getJSONArray("events").getJSONArray(i);
                     HashMap<String, String> event = new HashMap<>();
 
@@ -152,18 +168,35 @@ public class widget extends AbstractPlugin {
                     String start = "N/A";
                     String end = "";
                     String location = "";
-                    Calendar calendar = Calendar.getInstance();
+
                     if(!data.getString(2).equals("") && !data.getString(2).equals("null")) {
                         calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
+
+                        if(current_time > calendar.getTimeInMillis()){
+                            // Event expired, go to next
+                            continue;
+                        }
+                        if( next_event==0 ) // Hence this is the next event
+                            next_event = calendar.getTimeInMillis();
+
                         start = dateToString( calendar,"hh:mm a" );
 
-                        if( !last_date.equals(dateToString( calendar,"d MMMM" )) ){
-                            last_date = dateToString( calendar,"d MMMM" );
+                        // Insert day separator, or not :P
+                        if( !current_loop_date.equals(dateToString( calendar,"EEEE, d MMMM" )) ){
+                            current_loop_date = dateToString(calendar, "EEEE, d MMMM");
+                            // Is it today?
+                            if(current_loop_date.equals(dateToString(Calendar.getInstance(), "EEEE, d MMMM"))){
+                                current_loop_date = "Today";
+                            }
                             HashMap<String, String> date_elem = new HashMap<>();
-                            date_elem.put("title", last_date);
-                            date_elem.put("subtitle", "" );
+                            date_elem.put("title", "");
+                            date_elem.put("subtitle", current_loop_date );
+                            date_elem.put("dot", "" );
                             eventsList.add(date_elem);
                         }
+                    }else{
+                        // Event has no date, go to next
+                        continue;
                     }
                     if(!data.getString(3).equals("") && !data.getString(3).equals("null")) {
                         calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
@@ -173,6 +206,7 @@ public class widget extends AbstractPlugin {
                         location = "\n@ "+data.getString(4);
                     }
                     event.put("subtitle", start+ end + location );
+                    event.put("dot", mContext.getResources().getString(R.string.bull) );
                     // adding events to events list
                     eventsList.add(event);
                 }
@@ -185,6 +219,7 @@ public class widget extends AbstractPlugin {
                 //event.put("location", "-");
                 //event.put("account", "-");
                 event.put("subtitle", "-");
+                event.put("dot", "" );
                 eventsList.add(event);
             }
         } catch (JSONException e) {
@@ -197,17 +232,21 @@ public class widget extends AbstractPlugin {
             //event.put("location", "-");
             //event.put("account", "-");
             event.put("subtitle", "-");
+            event.put("dot", "" );
             eventsList.add(event);
         }
 
-        ListAdapter adapter = new SimpleAdapter(mContext, eventsList, R.layout.list_item, new String[]{"title", "subtitle"}, new int[]{R.id.title, R.id.description});
+        ListAdapter adapter = new SimpleAdapter(mContext, eventsList, R.layout.list_item, new String[]{"title", "subtitle", "dot"}, new int[]{R.id.title, R.id.description, R.id.dot});
         lv.setAdapter(adapter);
     }
 
 
     // Toast wrapper
     private void toast (String message) {
-        Toast.makeText(this.mContext, message, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(this.mContext, message, Toast.LENGTH_SHORT);
+        TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+        if( v != null) v.setGravity(Gravity.CENTER);
+        toast.show();
     }
 
     // Convert a date to format
@@ -219,7 +258,6 @@ public class widget extends AbstractPlugin {
     }
 
 
-
     /*
      * Widget active/deactivate state management
      */
@@ -228,13 +266,15 @@ public class widget extends AbstractPlugin {
     private void onShow() {
         // If view loaded (and was inactive)
         if (this.mView != null && !this.isActive) {
-            String now = this.dateToString(Calendar.getInstance());
-            String shown = this.dateToString(Calendar.getInstance());
-            // If not the correct view
-            if (!shown.equals(now)) {
-                // Refresh the view
-                this.refreshView();
+            refresh_time();
+
+            // If an event expired OR new events
+            if ( next_event+10*1000 < Calendar.getInstance().getTimeInMillis() || !calendarEvents.equals(Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData")) ) {
+                // Refresh timeline
+                loadCalendarEvents();
+                widget.this.toast("Refreshing events...");
             }
+
         }
 
         // Save state
@@ -341,3 +381,23 @@ public class widget extends AbstractPlugin {
 
 
 }
+
+/*
+abstract class doubleListLayoutAdapter extends SimpleAdapter {
+    private ArrayList types;
+
+    private doubleListLayoutAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to, ArrayList types) {
+        super(context, data, resource, from, to);
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return getItem(position).;
+    }
+}
+*/

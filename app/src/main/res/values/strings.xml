@@ -2,4 +2,6 @@
     <string name="app_name">Timeline Widget</string>
 
     <string name="bull">⚫</string>
+    <string name="refresh">↺</string>
+    <string name="top">▲</string>
 </resources>

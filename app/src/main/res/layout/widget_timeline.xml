@@ -9,14 +9,25 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:paddingTop="8dip"
+        android:paddingTop="6dip"
         android:textColor="@color/time"
-        android:background="@color/background"/>
+        android:textSize="12sp"/>
 
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="26dip"
-        android:layout_below="@+id/time"/>
+        android:layout_below="@+id/time"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/backToTop"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:gravity="center|top"
+        android:text="@string/top"
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dip"/>
 </RelativeLayout>
