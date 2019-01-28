@@ -1,4 +1,4 @@
-[![latest release](https://img.shields.io/badge/latest%20release-v1.0.0-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.01.24-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
+[![latest release](https://img.shields.io/badge/latest%20release-v1.0.1-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.01.28-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
 # Amazfit Timeline Widget
 
@@ -8,14 +8,14 @@ Here is the first Calendar Events Widget for our Amazfits!
 
 ### Features
 - This is a Pace/Stratos/Verge Widget
-- Shows your phone calendar
+- Shows your phone calendar events
 - Shows only future events and from the last 10 minutes
+- Long press time at top to manually refresh the events list (provided that new data have been send from phone)
 
 In order to work, [Amazmod](https://github.com/AmazMod/AmazMod) (both phone and service/watch) must be installed, and calendar data forwarding should be enabled.
 
 
 ### Bugs / To Do
-- Amazmod has no on/off option (events are just pushed along battery/alarm data)
 - No interaction with the events items (data not used: account, description)
 - Time should constantly be updated
 

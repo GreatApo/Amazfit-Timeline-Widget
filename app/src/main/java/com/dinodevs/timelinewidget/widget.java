@@ -111,7 +111,7 @@ public class widget extends AbstractPlugin {
             public boolean onLongClick(View v) {
                 refresh_time();
                 loadCalendarEvents();
-                widget.this.toast("Refreshing events...");
+                widget.this.toast("Events were refreshed");
                 return true;
             }
         });
@@ -210,17 +210,6 @@ public class widget extends AbstractPlugin {
                     // adding events to events list
                     eventsList.add(event);
                 }
-            }else{
-                HashMap<String, String> event = new HashMap<>();
-                event.put("title", "No events");
-                //event.put("description", "-");
-                //event.put("start", "-");
-                //event.put("end", "-");
-                //event.put("location", "-");
-                //event.put("account", "-");
-                event.put("subtitle", "-");
-                event.put("dot", "" );
-                eventsList.add(event);
             }
         } catch (JSONException e) {
             //default
@@ -234,6 +223,14 @@ public class widget extends AbstractPlugin {
             event.put("subtitle", "-");
             event.put("dot", "" );
             eventsList.add(event);
+        }
+
+        if(eventsList.isEmpty()){
+            HashMap<String, String> elem = new HashMap<>();
+            elem.put("title", "\nNo events");
+            elem.put("subtitle", "Make sure you use Amazmod on your phone and that your stock calendar has events.");
+            elem.put("dot", "" );
+            eventsList.add(elem);
         }
 
         ListAdapter adapter = new SimpleAdapter(mContext, eventsList, R.layout.list_item, new String[]{"title", "subtitle", "dot"}, new int[]{R.id.title, R.id.description, R.id.dot});
@@ -272,7 +269,6 @@ public class widget extends AbstractPlugin {
             if ( next_event+10*1000 < Calendar.getInstance().getTimeInMillis() || !calendarEvents.equals(Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData")) ) {
                 // Refresh timeline
                 loadCalendarEvents();
-                widget.this.toast("Refreshing events...");
             }
 
         }
