@@ -1,5 +1,5 @@
 [![latest release](https://img.shields.io/badge/latest%20release-v1.0.1-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.01.28-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
-
+![Amazfit Timeline Widget v1.0.1](other%20files/icon.png)
 # Amazfit Timeline Widget
 
 Here is the first Calendar Events Widget for our Amazfits!
@@ -48,6 +48,8 @@ adb uninstall com.dinodevs.timelinewidget
 
 ### Screenshots (Version 1.0.0)
 ![Amazfit Timeline Widget v1.0.0](other%20files/TimelineWidget-1.0.0.jpg)
+![Amazfit Timeline Widget v1.0.1](other%20files/no_events.jpg)
+![Amazfit Timeline Widget v1.0.1](other%20files/amazmod.jpg)
 
 
 
