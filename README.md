@@ -1,6 +1,6 @@
 [![latest release](https://img.shields.io/badge/latest%20release-v1.0.2-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.02.02-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
-![Amazfit Timeline Widget v1.0.2](other%20files/icon.png)
+![Amazfit Timeline Widget v1.0.2](other%20files/amazfit-timeline-widget.png)
 # Amazfit Timeline Widget
 
 Here is the first Calendar Events Widget for our Amazfits!
