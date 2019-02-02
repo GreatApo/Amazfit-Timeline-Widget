@@ -1,6 +1,6 @@
-[![latest release](https://img.shields.io/badge/latest%20release-v1.0.1-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.01.28-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
+[![latest release](https://img.shields.io/badge/latest%20release-v1.0.2-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.02.02-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
-![Amazfit Timeline Widget v1.0.1](other%20files/icon.png)
+![Amazfit Timeline Widget v1.0.2](other%20files/icon.png)
 # Amazfit Timeline Widget
 
 Here is the first Calendar Events Widget for our Amazfits!
@@ -12,13 +12,14 @@ Here is the first Calendar Events Widget for our Amazfits!
 - Shows your phone calendar events
 - Shows only future events and from the last 10 minutes
 - Long press time at top to manually refresh the events list (provided that new data have been send from phone)
+- 12/24h time format based on watch preferences
 
 In order to work, [Amazmod](https://github.com/AmazMod/AmazMod) (both phone and service/watch) must be installed, and calendar data forwarding should be enabled.
 
 
 ### Bugs / To Do
 - No interaction with the events items (data not used: account, description)
-- Time should constantly be updated
+- Time could constantly be updated, but it's not
 
 
 
@@ -47,7 +48,7 @@ adb uninstall com.dinodevs.timelinewidget
 
 
 
-### Screenshots (Version 1.0.0)
+### Screenshots (Version 1.0.1)
 ![Amazfit Timeline Widget v1.0.0](other%20files/TimelineWidget-1.0.0.jpg)
 ![Amazfit Timeline Widget v1.0.1](other%20files/no_events.jpg)
 ![Amazfit Timeline Widget v1.0.1](other%20files/amazmod.jpg)
