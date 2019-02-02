@@ -165,101 +165,103 @@ public class widget extends AbstractPlugin {
         // Load data
         calendarEvents = Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData");
 
-        try {
-            // Check if correct form of JSON
-            JSONObject json_data = new JSONObject(calendarEvents);
+        if(calendarEvents !=null && !calendarEvents.isEmpty() ) {
+            try {
+                // Check if correct form of JSON
+                JSONObject json_data = new JSONObject(calendarEvents);
 
-            // If there are events
-            if( json_data.has("events") ){
-                int event_number = json_data.getJSONArray("events").length();
+                // If there are events
+                if (json_data.has("events")) {
+                    int event_number = json_data.getJSONArray("events").length();
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.MINUTE,-10); // Show only future events + 10 minutes old
-                long current_time = calendar.getTimeInMillis();
-                String current_loop_date = "";
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.MINUTE, -10); // Show only future events + 10 minutes old
+                    long current_time = calendar.getTimeInMillis();
+                    String current_loop_date = "";
 
-                // Get data
-                for(int i=0; i<event_number; i++) {
-                    JSONArray data = json_data.getJSONArray("events").getJSONArray(i);
-                    HashMap<String, String> event = new HashMap<>();
+                    // Get data
+                    for (int i = 0; i < event_number; i++) {
+                        JSONArray data = json_data.getJSONArray("events").getJSONArray(i);
+                        HashMap<String, String> event = new HashMap<>();
 
-                    // adding each child node to HashMap key => value
-                    event.put("title", data.getString(0));
-                    //event.put("description", data.getString(1));
-                    //event.put("start", data.getString(2));
-                    //event.put("end", data.getString(3));
-                    //event.put("location", data.getString(4));
-                    //event.put("account", data.getString(5));
+                        // adding each child node to HashMap key => value
+                        event.put("title", data.getString(0));
+                        //event.put("description", data.getString(1));
+                        //event.put("start", data.getString(2));
+                        //event.put("end", data.getString(3));
+                        //event.put("location", data.getString(4));
+                        //event.put("account", data.getString(5));
 
-                    String start = "N/A";
-                    String end = "";
-                    String location = "";
+                        String start = "N/A";
+                        String end = "";
+                        String location = "";
 
-                    if(!data.getString(2).equals("") && !data.getString(2).equals("null")) {
-                        calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
+                        if (!data.getString(2).equals("") && !data.getString(2).equals("null")) {
+                            calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
 
-                        if(current_time > calendar.getTimeInMillis()){
-                            // Event expired, go to next
+                            if (current_time > calendar.getTimeInMillis()) {
+                                // Event expired, go to next
+                                continue;
+                            }
+                            if (next_event == 0) // Hence this is the next event
+                                next_event = calendar.getTimeInMillis();
+
+                            start = dateToString(calendar, time_pattern);
+
+                            // Insert day separator, or not :P
+                            if (!current_loop_date.equals(dateToString(calendar, ELEMENT_PATTERN))) {
+                                current_loop_date = dateToString(calendar, ELEMENT_PATTERN);
+                                // Is it today?
+                                if (current_loop_date.equals(dateToString(Calendar.getInstance(), ELEMENT_PATTERN))) {
+                                    current_loop_date = mContext.getResources().getString(R.string.today);
+                                }
+                                HashMap<String, String> date_elem = new HashMap<>();
+                                date_elem.put("title", "");
+                                date_elem.put("subtitle", current_loop_date);
+                                date_elem.put("dot", "");
+                                eventsList.add(date_elem);
+                            }
+                        } else {
+                            // Event has no date, go to next
                             continue;
                         }
-                        if( next_event==0 ) // Hence this is the next event
-                            next_event = calendar.getTimeInMillis();
 
-                        start = dateToString( calendar,time_pattern );
-
-                        // Insert day separator, or not :P
-                        if( !current_loop_date.equals(dateToString( calendar,ELEMENT_PATTERN )) ){
-                            current_loop_date = dateToString(calendar, ELEMENT_PATTERN);
-                            // Is it today?
-                            if(current_loop_date.equals(dateToString(Calendar.getInstance(), ELEMENT_PATTERN))){
-                                current_loop_date = mContext.getResources().getString(R.string.today);
-                            }
-                            HashMap<String, String> date_elem = new HashMap<>();
-                            date_elem.put("title", "");
-                            date_elem.put("subtitle", current_loop_date );
-                            date_elem.put("dot", "" );
-                            eventsList.add(date_elem);
+                        // No end
+                        if (!data.getString(3).equals("") && !data.getString(3).equals("null")) {
+                            calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
+                            end = " - " + dateToString(calendar, time_pattern);
                         }
-                    }else{
-                        // Event has no date, go to next
-                        continue;
-                    }
 
-                    // No end
-                    if(!data.getString(3).equals("") && !data.getString(3).equals("null")) {
-                        calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
-                        end = " - "+ dateToString(calendar, time_pattern);
-                    }
+                        // All day events
+                        if ((start.startsWith("00") || start.startsWith("12")) && data.getString(3).equals("null")) {
+                            start = mContext.getResources().getString(R.string.all_day);
+                            end = "";
+                        }
 
-                    // All day events
-                    if((start.startsWith("00") || start.startsWith("12")) && data.getString(3).equals("null")) {
-                        start = mContext.getResources().getString(R.string.all_day);
-                        end = "";
-                    }
+                        // Location
+                        if (!data.getString(4).equals("") && !data.getString(4).equals("null")) {
+                            location = "\n@ " + data.getString(4);
+                        }
 
-                    // Location
-                    if(!data.getString(4).equals("") && !data.getString(4).equals("null")) {
-                        location = "\n@ "+data.getString(4);
+                        event.put("subtitle", start + end + location);
+                        event.put("dot", mContext.getResources().getString(R.string.bull));
+                        // adding events to events list
+                        eventsList.add(event);
                     }
-
-                    event.put("subtitle", start+ end + location );
-                    event.put("dot", mContext.getResources().getString(R.string.bull) );
-                    // adding events to events list
-                    eventsList.add(event);
                 }
+            } catch (JSONException e) {
+                //default
+                HashMap<String, String> event = new HashMap<>();
+                event.put("title", mContext.getResources().getString(R.string.no_events));
+                //event.put("description", "-");
+                //event.put("start", "-");
+                //event.put("end", "-");
+                //event.put("location", "-");
+                //event.put("account", "-");
+                event.put("subtitle", "-");
+                event.put("dot", "");
+                eventsList.add(event);
             }
-        } catch (JSONException e) {
-            //default
-            HashMap<String, String> event = new HashMap<>();
-            event.put("title", mContext.getResources().getString(R.string.no_events));
-            //event.put("description", "-");
-            //event.put("start", "-");
-            //event.put("end", "-");
-            //event.put("location", "-");
-            //event.put("account", "-");
-            event.put("subtitle", "-");
-            event.put("dot", "" );
-            eventsList.add(event);
         }
 
         if(eventsList.isEmpty()){
