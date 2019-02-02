@@ -23,8 +23,8 @@
     <TextView
         android:id="@+id/backToTop"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:gravity="center|top"
+        android:layout_height="100dp"
+        android:gravity="center|center"
         android:text="@string/top"
         android:textColor="#fff"
         android:textSize="16sp"

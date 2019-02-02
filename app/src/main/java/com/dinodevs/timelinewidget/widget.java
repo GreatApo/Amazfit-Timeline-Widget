@@ -51,6 +51,16 @@ public class widget extends AbstractPlugin {
 
     private long next_event;
     private String calendarEvents;
+    private String header_pattern;
+    private String time_pattern;
+
+    // Constants
+    private static final String HEADER_PATTERN_12H = "hh:mm a\nEEEE, d MMMM";
+    private static final String HEADER_PATTERN_24H = "HH:mm\nEEEE, d MMMM";
+    private static final String ELEMENT_PATTERN = "EEEE, d MMMM";
+    private static final String TIME_PATTERN_12H = "hh:mm a";
+    private static final String TIME_PATTERN_24H = "HH:mm";
+    private static final String DATE_PATTERN = "dd/MM/yyyy";
 
 
     // Set up the widget's layout
@@ -128,13 +138,29 @@ public class widget extends AbstractPlugin {
     }
 
     private void refresh_time(){
+        is24h();
         TextView time = this.mView.findViewById(R.id.time);
-        time.setText( dateToString(Calendar.getInstance(),"hh:mm a\nEEEE, d MMMM") );
+        time.setText( dateToString(Calendar.getInstance(),header_pattern) );
+    }
+
+    boolean is24h;
+    private void is24h(){
+        is24h = Settings.System.getString(mContext.getContentResolver(), "time_12_24").equals("24");
+        Log.d(TAG, "Timeline init is24h: " + is24h);
+
+        if (is24h) {
+            header_pattern = HEADER_PATTERN_24H;
+            time_pattern = TIME_PATTERN_24H;
+        } else {
+            header_pattern = HEADER_PATTERN_12H;
+            time_pattern = TIME_PATTERN_12H;
+        }
     }
 
     private void loadCalendarEvents() {
         eventsList = new ArrayList<>();
         next_event = 0;
+        is24h();
 
         // Load data
         calendarEvents = Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData");
@@ -179,14 +205,14 @@ public class widget extends AbstractPlugin {
                         if( next_event==0 ) // Hence this is the next event
                             next_event = calendar.getTimeInMillis();
 
-                        start = dateToString( calendar,"hh:mm a" );
+                        start = dateToString( calendar,time_pattern );
 
                         // Insert day separator, or not :P
-                        if( !current_loop_date.equals(dateToString( calendar,"EEEE, d MMMM" )) ){
-                            current_loop_date = dateToString(calendar, "EEEE, d MMMM");
+                        if( !current_loop_date.equals(dateToString( calendar,ELEMENT_PATTERN )) ){
+                            current_loop_date = dateToString(calendar, ELEMENT_PATTERN);
                             // Is it today?
-                            if(current_loop_date.equals(dateToString(Calendar.getInstance(), "EEEE, d MMMM"))){
-                                current_loop_date = "Today";
+                            if(current_loop_date.equals(dateToString(Calendar.getInstance(), ELEMENT_PATTERN))){
+                                current_loop_date = mContext.getResources().getString(R.string.today);
                             }
                             HashMap<String, String> date_elem = new HashMap<>();
                             date_elem.put("title", "");
@@ -198,13 +224,24 @@ public class widget extends AbstractPlugin {
                         // Event has no date, go to next
                         continue;
                     }
+
+                    // No end
                     if(!data.getString(3).equals("") && !data.getString(3).equals("null")) {
                         calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
-                        end = " - "+ dateToString(calendar, "hh:mm a");
+                        end = " - "+ dateToString(calendar, time_pattern);
                     }
+
+                    // All day events
+                    if((start.startsWith("00") || start.startsWith("12")) && data.getString(3).equals("null")) {
+                        start = mContext.getResources().getString(R.string.all_day);
+                        end = "";
+                    }
+
+                    // Location
                     if(!data.getString(4).equals("") && !data.getString(4).equals("null")) {
                         location = "\n@ "+data.getString(4);
                     }
+
                     event.put("subtitle", start+ end + location );
                     event.put("dot", mContext.getResources().getString(R.string.bull) );
                     // adding events to events list
@@ -214,7 +251,7 @@ public class widget extends AbstractPlugin {
         } catch (JSONException e) {
             //default
             HashMap<String, String> event = new HashMap<>();
-            event.put("title", "No events");
+            event.put("title", mContext.getResources().getString(R.string.no_events));
             //event.put("description", "-");
             //event.put("start", "-");
             //event.put("end", "-");
@@ -227,8 +264,8 @@ public class widget extends AbstractPlugin {
 
         if(eventsList.isEmpty()){
             HashMap<String, String> elem = new HashMap<>();
-            elem.put("title", "\nNo events");
-            elem.put("subtitle", "Make sure you use Amazmod on your phone and that your stock calendar has events.");
+            elem.put("title", "\n"+mContext.getResources().getString(R.string.no_events));
+            elem.put("subtitle", mContext.getResources().getString(R.string.no_events_description));
             elem.put("dot", "" );
             eventsList.add(elem);
         }
@@ -248,7 +285,7 @@ public class widget extends AbstractPlugin {
 
     // Convert a date to format
     private String dateToString (Calendar date) {
-        return (new SimpleDateFormat("dd/MM/yyyy", Locale.US)).format(date.getTime());
+        return (new SimpleDateFormat(DATE_PATTERN, Locale.US)).format(date.getTime());
     }
     private String dateToString (Calendar date, String pattern) {
         return (new SimpleDateFormat(pattern, Locale.US)).format(date.getTime());
@@ -263,14 +300,12 @@ public class widget extends AbstractPlugin {
     private void onShow() {
         // If view loaded (and was inactive)
         if (this.mView != null && !this.isActive) {
-            refresh_time();
-
-            // If an event expired OR new events
-            if ( next_event+10*1000 < Calendar.getInstance().getTimeInMillis() || !calendarEvents.equals(Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData")) ) {
+            // If an event expired OR new events OR changed 12/24h
+            if ( next_event+10*1000 < Calendar.getInstance().getTimeInMillis() || !calendarEvents.equals(Settings.System.getString(mContext.getContentResolver(), "CustomCalendarData")) || is24h != Settings.System.getString(mContext.getContentResolver(), "time_12_24").equals("24") ) {
                 // Refresh timeline
                 loadCalendarEvents();
             }
-
+            refresh_time();
         }
 
         // Save state
@@ -377,23 +412,3 @@ public class widget extends AbstractPlugin {
 
 
 }
-
-/*
-abstract class doubleListLayoutAdapter extends SimpleAdapter {
-    private ArrayList types;
-
-    private doubleListLayoutAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to, ArrayList types) {
-        super(context, data, resource, from, to);
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 2;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return getItem(position).;
-    }
-}
-*/
