@@ -1,4 +1,4 @@
-[![latest release](https://img.shields.io/badge/latest%20release-v1.0.2-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.02.02-orange.svg?style=flat-square)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest) [![HitCount](http://hits.dwyl.io/GreatApo/AmazfitTimelineWidget.svg)](http://hits.dwyl.io/GreatApo/AmazfitTimelineWidget)
+[![latest release](https://img.shields.io/badge/latest%20release-v1.0.2-green.svg?style=flat-square) ![release date](https://img.shields.io/badge/release%20date-2019.02.02-orange.svg?style=flat-square) ![Downloads](https://img.shields.io/github/downloads/GreatApo/Amazfit-Timeline-Widget/total.svg?style=flat-square) ![HitCount](http://hits.dwyl.io/GreatApo/AmazfitTimelineWidget.svg)](https://github.com/GreatApo/Amazfit-Timeline-Widget/releases/latest)
 
 ![Amazfit Timeline Widget v1.0.2](other%20files/amazfit-timeline-widget.png)
 # Amazfit Timeline Widget
