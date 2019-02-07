@@ -211,13 +211,9 @@ public class widget extends AbstractPlugin {
                             // Insert day separator, or not :P
                             if (!current_loop_date.equals(dateToString(calendar, ELEMENT_PATTERN))) {
                                 current_loop_date = dateToString(calendar, ELEMENT_PATTERN);
-                                // Is it today?
-                                if (current_loop_date.equals(dateToString(Calendar.getInstance(), ELEMENT_PATTERN))) {
-                                    current_loop_date = mContext.getResources().getString(R.string.today);
-                                }
                                 HashMap<String, String> date_elem = new HashMap<>();
                                 date_elem.put("title", "");
-                                date_elem.put("subtitle", current_loop_date);
+                                date_elem.put("subtitle", (current_loop_date.equals(dateToString(Calendar.getInstance(), ELEMENT_PATTERN)))?mContext.getResources().getString(R.string.today):current_loop_date);
                                 date_elem.put("dot", "");
                                 eventsList.add(date_elem);
                             }
