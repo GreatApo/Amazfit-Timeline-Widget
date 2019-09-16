@@ -27,9 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import clc.sliteplugin.flowboard.AbstractPlugin;
 import clc.sliteplugin.flowboard.ISpringBoardHostStub;
@@ -37,7 +35,18 @@ import clc.sliteplugin.flowboard.ISpringBoardHostStub;
 public class widget extends AbstractPlugin {
 
     // Tag for logging purposes.
-    private static String TAG = "TimelineWidget";
+    private final static String TAG = "TimelineWidget";
+
+    private final static int CALENDAR_DATA_INDEX_TITLE = 0;
+    private final static int CALENDAR_DATA_INDEX_DESCRIPTION = 1;
+    private final static int CALENDAR_DATA_INDEX_START = 2;
+    private final static int CALENDAR_DATA_INDEX_END = 3;
+    private final static int CALENDAR_DATA_INDEX_LOCATION = 4;
+    private final static int CALENDAR_DATA_INDEX_ACCOUNT = 5;
+    private final static int CALENDAR_EXTENDED_DATA_INDEX = 6;
+
+    private final static String CALENDAR_DATA_PARAM_EXTENDED_DATA_ALL_DAY = "all_day";
+
     // Version
     private String version = "n/a";
 
@@ -185,7 +194,7 @@ public class widget extends AbstractPlugin {
                         HashMap<String, String> event = new HashMap<>();
 
                         // adding each child node to HashMap key => value
-                        event.put("title", data.getString(0));
+                        event.put("title", data.getString(CALENDAR_DATA_INDEX_TITLE));
                         //event.put("description", data.getString(1));
                         //event.put("start", data.getString(2));
                         //event.put("end", data.getString(3));
@@ -199,8 +208,9 @@ public class widget extends AbstractPlugin {
                         long endTimeInMillis = -1;
 
                         // No end
-                        if (!data.getString(3).equals("") && !data.getString(3).equals("null")) {
-                            endTimeInMillis = Long.parseLong(data.getString(3));
+                        String end_item = data.getString(CALENDAR_DATA_INDEX_END);
+                        if (!end_item.equals("") && !end_item.equals("null")) {
+                            endTimeInMillis = Long.parseLong(end_item);
 
                             if (current_time > endTimeInMillis) {
                                 // Event expired, go to next
@@ -211,8 +221,9 @@ public class widget extends AbstractPlugin {
                             end = " - " + dateToString(calendar, time_pattern);
                         }
 
-                        if (!data.getString(2).equals("") && !data.getString(2).equals("null")) {
-                            calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
+                        String start_item = data.getString(CALENDAR_DATA_INDEX_START);
+                        if (!start_item.equals("") && !start_item.equals("null")) {
+                            calendar.setTimeInMillis(Long.parseLong(start_item));
 
                             if (endTimeInMillis == -1 && current_time > calendar.getTimeInMillis()) {
                                 // Event have no end time an begin time is expired, go to next
@@ -238,14 +249,28 @@ public class widget extends AbstractPlugin {
                         }
 
                         // All day events
-                        if ((start.startsWith("00") || start.startsWith("12")) && data.getString(3).equals("null")) {
+                        boolean all_day = false;
+                        JSONObject extended_data = (JSONObject) data.opt(CALENDAR_EXTENDED_DATA_INDEX);
+
+                        if (extended_data != null) {
+                            all_day = "1".equals(
+                                    extended_data.get(CALENDAR_DATA_PARAM_EXTENDED_DATA_ALL_DAY));
+                        } else {
+                            // Old protocol, fallback to old handler.
+
+                            if ((start.startsWith("00") || start.startsWith("12")) && end_item.equals("null")) {
+                                all_day = true;
+                            }
+                        }
+                        if (all_day) {
                             start = mContext.getResources().getString(R.string.all_day);
                             end = "";
                         }
 
                         // Location
-                        if (!data.getString(4).equals("") && !data.getString(4).equals("null")) {
-                            location = "\n@ " + data.getString(4);
+                        String location_item = data.getString(CALENDAR_DATA_INDEX_LOCATION);
+                        if (!location_item.equals("") && !location_item.equals("null")) {
+                            location = "\n@ " + location_item;
                         }
 
                         event.put("subtitle", start + end + location);
