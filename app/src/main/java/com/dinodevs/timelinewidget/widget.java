@@ -196,11 +196,26 @@ public class widget extends AbstractPlugin {
                         String end = "";
                         String location = "";
 
+                        long endTimeInMillis = -1;
+
+                        // No end
+                        if (!data.getString(3).equals("") && !data.getString(3).equals("null")) {
+                            endTimeInMillis = Long.parseLong(data.getString(3));
+
+                            if (current_time > endTimeInMillis) {
+                                // Event expired, go to next
+                                continue;
+                            }
+
+                            calendar.setTimeInMillis(endTimeInMillis);
+                            end = " - " + dateToString(calendar, time_pattern);
+                        }
+
                         if (!data.getString(2).equals("") && !data.getString(2).equals("null")) {
                             calendar.setTimeInMillis(Long.parseLong(data.getString(2)));
 
-                            if (current_time > calendar.getTimeInMillis()) {
-                                // Event expired, go to next
+                            if (endTimeInMillis == -1 && current_time > calendar.getTimeInMillis()) {
+                                // Event have no end time an begin time is expired, go to next
                                 continue;
                             }
                             if (next_event == 0) // Hence this is the next event
@@ -220,12 +235,6 @@ public class widget extends AbstractPlugin {
                         } else {
                             // Event has no date, go to next
                             continue;
-                        }
-
-                        // No end
-                        if (!data.getString(3).equals("") && !data.getString(3).equals("null")) {
-                            calendar.setTimeInMillis(Long.parseLong(data.getString(3)));
-                            end = " - " + dateToString(calendar, time_pattern);
                         }
 
                         // All day events
